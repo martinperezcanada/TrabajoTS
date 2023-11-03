@@ -15,7 +15,7 @@ async function fetchBoredActivity(): Promise<BoredActivity> {
   }
 }
 
-async function fetchActivityImage(activityType: string): Promise<string | null> {
+async function imagenesAPI(activityType: string): Promise<string | null> {
   try {
     const apiKey = 'wVfs9NhocZHtfwo5bT50ormvPGwZNflLHS0dJTVC7dumCK6daADG2dTf';
     const apiEndPoint = `https://api.pexels.com/v1/search?query=${activityType}&per_page=1`;
@@ -39,60 +39,25 @@ async function fetchActivityImage(activityType: string): Promise<string | null> 
   return null; 
 }
 
-function getIconByValue(value: number, type: string): string {
+function getIconByValue(value: number, type: string) {
   let icon: string;
 
-  if (type === 'price') {
-    switch (value) {
-      case 1:
-        icon = 'price-low-icon'; // Ícono para un precio bajo
-        break;
-      case 2:
-        icon = 'price-medium-icon'; // Ícono para un precio medio
-        break;
-      case 3:
-        icon = 'price-high-icon'; // Ícono para un precio alto
-        break;
-      default:
-        icon = 'price-default-icon'; // Ícono predeterminado para valores desconocidos
-        break;
-    }
-  } else if (type === 'accessibility') {
-    switch (value) {
-      case 1:
-        icon = 'accessibility-low-icon'; // Ícono para baja accesibilidad
-        break;
-      case 2:
-        icon = 'accessibility-medium-icon'; // Ícono para accesibilidad media
-        break;
-      case 3:
-        icon = 'accessibility-high-icon'; // Ícono para alta accesibilidad
-        break;
-      default:
-        icon = 'accessibility-default-icon'; // Ícono predeterminado para valores desconocidos
-        break;
-    }
-  } else {
-    icon = 'default-icon'; // Ícono predeterminado para cualquier otro tipo
-  }
-
-  return icon;
 }
 
-async function updateActivityInfo(): Promise<void> {
+async function actualizarInformacion(): Promise<void> {
   try {
-    const activityData: BoredActivity = await fetchBoredActivity();
+    const informacion: BoredActivity = await fetchBoredActivity();
 
-    document.getElementById('activity')!.textContent = `Actividad: ${activityData.activity}`;
-    document.getElementById('type')!.textContent = `Tipo: ${activityData.type}`;
-    document.getElementById('participants')!.textContent = `Participantes: ${activityData.participants}`;
-    document.getElementById('price')!.textContent = `Precio: ${getIconByValue(activityData.price, 'price')}`;
-    document.getElementById('accessibility')!.textContent = `Accesibilidad: ${getIconByValue(activityData.accessibility, 'accessibility')}`;
+    document.getElementById('activity')!.textContent = `Actividad: ${informacion.activity}`;
+    document.getElementById('type')!.textContent = `Tipo: ${informacion.type}`;
+    document.getElementById('participants')!.textContent = `Participantes: ${informacion.participants}`;
+    document.getElementById('price')!.textContent = `Precio: ${getIconByValue(informacion.price, 'price')}`;
+    document.getElementById('accessibility')!.textContent = `Accesibilidad: ${getIconByValue(informacion.accessibility, 'accessibility')}`;
 
-    const imageUrl: string | null = await fetchActivityImage(activityData.type);
+    const imageUrl: string | null = await imagenesAPI(informacion.type);
     if (imageUrl) {
       (document.getElementById('activity-image') as HTMLImageElement).src = imageUrl;
-      (document.getElementById('activity-image') as HTMLImageElement).alt = `Imagen de ${activityData.type}`;
+      (document.getElementById('activity-image') as HTMLImageElement).alt = `Imagen de ${informacion.type}`;
     } else {
       (document.getElementById('activity-image') as HTMLImageElement).src = '';
     }
@@ -101,7 +66,7 @@ async function updateActivityInfo(): Promise<void> {
   }
 }
 
-updateActivityInfo();
+actualizarInformacion();
 
 const newActivityBtn = document.getElementById('newActivityBtn');
-newActivityBtn?.addEventListener('click', updateActivityInfo);
+newActivityBtn?.addEventListener('click', actualizarInformacion);
